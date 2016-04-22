@@ -6,6 +6,7 @@
 		<project>anz-iib-commons</project>
 		<project>MQToMQ-Java</project>
 		<project>MQToMQ-TestJava</project>
+		<project>MQToMQJava</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

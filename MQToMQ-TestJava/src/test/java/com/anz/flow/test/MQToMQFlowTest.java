@@ -48,7 +48,7 @@ public class MQToMQFlowTest extends FlowTest {
 	private Gson gson = new Gson();
 	ObjectMapper objectMapper = new ObjectMapper();
 
-	private static final String TEST_FILE_001 = "HttpJsonToHttpJson.Test001.xml";
+	private static final String TEST_FILE_001 = "MQToMQ.Test001.xml";
 	private static final String applicationName = "MQToMQ";
 	private static final String flowName = "Request";
 	private static final String injectNodeName ="Read Request";
@@ -75,7 +75,6 @@ public class MQToMQFlowTest extends FlowTest {
 		String jsonBlob = TransformUtils.getBlob(message);
 		String messageFormat = IOUtils.toString(MQToMQFlowTest.class.getResourceAsStream(MESSAGE_FORMAT));
 		message = messageFormat.replace("MESSAGE_FORMAT", jsonBlob);
-		logger.info(message);
 		
 		Properties injectProps = new Properties();
 		injectProps.setProperty(AttributeConstants.DATA_INJECTION_APPLICATION_LABEL, applicationName); 		
@@ -95,6 +94,7 @@ public class MQToMQFlowTest extends FlowTest {
 	@Test
 	public void testMainFlow() throws ConfigManagerProxyPropertyNotInitializedException, ConfigManagerProxyLoggedException, IOException, XPathExpressionException, SAXException, ParserConfigurationException, TransformerException, JSONException {
 		injectData();
+		//User defined test method calls
 		//testMQInputNodeOutput();
 		testSimpleTransformNodeOutput();
 		testPostTransformNodeOutput();

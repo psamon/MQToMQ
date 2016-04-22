@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmFlowOrder.msgnode="ComIbmFlowOrder.msgnode" xmlns:ComIbmJavaCompute.msgnode="ComIbmJavaCompute.msgnode" xmlns:ComIbmMQGet.msgnode="ComIbmMQGet.msgnode" xmlns:ComIbmMQHeader.msgnode="ComIbmMQHeader.msgnode" xmlns:ComIbmMQInput.msgnode="ComIbmMQInput.msgnode" xmlns:ComIbmMQOutput.msgnode="ComIbmMQOutput.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow"
-    xmlns:patternAnnotation="http://www.ibm.com/patternAnnotation/2010" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="Request.msgflow" nsPrefix="Request.msgflow">
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmFlowOrder.msgnode="ComIbmFlowOrder.msgnode" xmlns:ComIbmJavaCompute.msgnode="ComIbmJavaCompute.msgnode" xmlns:ComIbmMQGet.msgnode="ComIbmMQGet.msgnode" xmlns:ComIbmMQHeader.msgnode="ComIbmMQHeader.msgnode" xmlns:ComIbmMQInput.msgnode="ComIbmMQInput.msgnode" xmlns:ComIbmMQOutput.msgnode="ComIbmMQOutput.msgnode" xmlns:ErrorHandler.subflow="ErrorHandler.subflow" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:patternAnnotation="http://www.ibm.com/patternAnnotation/2010" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="Request.msgflow" nsPrefix="Request.msgflow">
   <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1">
     <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
     <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.APP_NAME" name="APP_NAME" lowerBound="1" defaultValueLiteral="MQToMQ">
@@ -18,6 +18,7 @@
     <composition>
       <nodes xmi:type="ComIbmFlowOrder.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="146,130">
         <translation xmi:type="utility:ConstantString" string="Save First"/>
+        <shortDescription xmi:type="utility:ConstantString" string="save message to store first then send to service"/>
       </nodes>
       <nodes xmi:type="ComIbmMQOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="401,18" queueName="STORE" transactionMode="yes" persistenceMode="yes">
         <translation xmi:type="utility:ConstantString" string="Save to Store"/>
@@ -25,34 +26,44 @@
       <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="232,17" computeExpression="esql://routine/mqsi#ExtractOriginalMQMD.Main">
         <translation xmi:type="utility:ConstantString" string="Extract Original MQMD"/>
       </nodes>
-      <nodes xmi:type="ComIbmMQHeader.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_7" location="601,138" mqmdAAAOptions="Modify header" mqmdCodedCharSetId="Inherit" mqmdFormat="Inherit" mqmdMsgType="MQMT_REQUEST" mqmdExpiry="MQEI_UNLIMITED" mqmdFeedback="Inherit" mqmdMsgId="Inherit" mqmdCorrelId="Inherit" mqmdReplyToQ="RESPONSE" mqmdReplyToQMgr="$Environment/Variables/BrokerQueueManager">
+      <nodes xmi:type="ComIbmMQHeader.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_7" location="601,138" mqmdAAAOptions="Modify header" mqmdCodedCharSetId="Inherit" mqmdFormat="Inherit" mqmdMsgType="Inherit" mqmdExpiry="Inherit" mqmdFeedback="Inherit" mqmdPriority="Inherit" mqmdPersistence=" &lt;Inherit from header>" mqmdMsgId="Inherit" mqmdCorrelId="Inherit" mqmdReplyToQ="RESPONSE" mqmdReplyToQMgr="Inherit">
         <translation xmi:type="utility:ConstantString" string="Add Reply Address"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Add MQMD header with ReplyToQ = Response queue"/>
       </nodes>
-      <nodes xmi:type="ComIbmMQInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="38,131" queueName="IN" messageDomainProperty="BLOB">
+      <nodes xmi:type="ComIbmMQInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="12,133" queueName="IN" messageDomainProperty="BLOB">
         <translation xmi:type="utility:ConstantString" string="Read Request"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Read request message from input queue"/>
       </nodes>
       <nodes xmi:type="ComIbmMQOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_10" location="758,139" queueName="PROVIDER" transactionMode="yes" persistenceMode="yes" queueManagerName="" validateMaster="none">
         <translation xmi:type="utility:ConstantString" string="Propagate Request"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Output message onto service input queue"/>
       </nodes>
-      <nodes xmi:type="ComIbmJavaCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_35" location="266,138" javaClass="com.anz.common.compute.impl.CommonJsonJsonTransformCompute">
-        <translation xmi:type="utility:ConstantString" string="com.anz.bl.transform.PreTransformBLSample"/>
+      <nodes xmi:type="ComIbmJavaCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_35" location="266,138" javaClass="com.anz.bl.compute.RequestTransformCompute">
+        <translation xmi:type="utility:ConstantString" string="Request Transform"/>
+        <shortDescription xmi:type="utility:ConstantString" string="User defined Java transformation "/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="168,308" computeExpression="esql://routine/mqsi#SetResponseMode.Main" computeMode="destination">
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="161,390" computeExpression="esql://routine/mqsi#SetResponseMode.Main" computeMode="destination">
         <translation xmi:type="utility:ConstantString" string="Initialise"/>
       </nodes>
-      <nodes xmi:type="ComIbmJavaCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="283,310" javaClass="com.anz.common.compute.impl.CommonJsonJsonTransformCompute">
-        <translation xmi:type="utility:ConstantString" string="com.anz.bl.transform.PostTransformBLSample"/>
+      <nodes xmi:type="ComIbmJavaCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="280,389" javaClass="com.anz.bl.compute.ResponseTransformCompute">
+        <translation xmi:type="utility:ConstantString" string="Response Transform"/>
+        <shortDescription xmi:type="utility:ConstantString" string="User defined Java transformation"/>
       </nodes>
-      <nodes xmi:type="ComIbmMQGet.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_9" location="651,305" queueName="STORE" messageDomainProperty="JSON" transactionMode="no" copyMessage="copyEntireMessage" minimumGetBufferSize="1" getWithCorrelID="true" outputDataLocation="OutputRoot.MQMD" resultDataLocation="ResultRoot.MQMD">
+      <nodes xmi:type="ComIbmMQGet.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_9" location="644,385" queueName="STORE" messageDomainProperty="JSON" transactionMode="no" copyMessage="copyEntireMessage" waitInterval="10000" minimumGetBufferSize="1" getWithCorrelID="true" outputDataLocation="OutputRoot.MQMD" resultDataLocation="ResultRoot.MQMD">
         <translation xmi:type="utility:ConstantString" string="Retrieve"/>
-        <shortDescription xmi:type="utility:ConstantString" string="Reads the original MQMD from the store"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Reads the original MQMD from the store and adds to output"/>
         <longDescription xmi:type="utility:ConstantString" string="This MQ Get node reads  corresponding stored message, selected via the message correlator ID.  This message contains the original request MQMD containing the reply-to queue and queue manager name of the requestor application that was stored during the request flow"/>
       </nodes>
-      <nodes xmi:type="ComIbmMQInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_11" location="62,308" queueName="RESPONSE" messageDomainProperty="BLOB">
+      <nodes xmi:type="ComIbmMQInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_11" location="55,390" queueName="RESPONSE" messageDomainProperty="BLOB">
         <translation xmi:type="utility:ConstantString" string="Response"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Read response from MQ service"/>
       </nodes>
-      <nodes xmi:type="ComIbmMQOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_16" location="817,303" queueName="OUT">
+      <nodes xmi:type="ComIbmMQOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_16" location="920,380" queueName="OUT">
         <translation xmi:type="utility:ConstantString" string="Send Reply"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Send transformed MQ service output message to output queue"/>
+      </nodes>
+      <nodes xmi:type="ErrorHandler.subflow:FCMComposite_1" xmi:id="FCMComposite_1_19" location="271,231">
+        <translation xmi:type="utility:ConstantString" string="ErrorHandler"/>
       </nodes>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_1" sourceNode="FCMComposite_1_8" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.first" targetTerminalName="InTerminal.in"/>
@@ -64,6 +75,10 @@
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_11" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7" targetNode="FCMComposite_1_9" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_12" targetNode="FCMComposite_1_16" sourceNode="FCMComposite_1_9" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_32" targetNode="FCMComposite_1_19" sourceNode="FCMComposite_1_8" sourceTerminalName="OutTerminal.catch" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_33" targetNode="FCMComposite_1_16" sourceNode="FCMComposite_1_19" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_37" targetNode="FCMComposite_1_19" sourceNode="FCMComposite_1_11" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_38" targetNode="FCMComposite_1_19" sourceNode="FCMComposite_1_11" sourceTerminalName="OutTerminal.catch" targetTerminalName="InTerminal.Input"/>
     </composition>
     <propertyOrganizer>
       <propertyDescriptor groupName="Group.Basic" configurable="true" userDefined="true" describedAttribute="Property.APP_NAME">
