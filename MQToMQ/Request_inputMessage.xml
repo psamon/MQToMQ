@@ -10,6 +10,6 @@
     </MQInputMessage>
     <MQInputMessage timestamp="1461036862453" nodeId="FCMComposite_1_8" name="new message 3" id="1461036862453-90">
         <plainText>%7B%0A++%22left%22%3A+5%2C%0A++%22right%22%3A+7%0A%7D</plainText>
-        <MessageHeader backoutCount="0" characterSet="0" encoding="0" expiry="500" feedback="0" messageFlags="0" messageType="8" messageSequenceNumber="1" offset="0" originalLength="-1" persistence="2" priority="-1" putApplicationType="0" replyToQueueName="RESPONSE" report="0"/>
+        <MessageHeader backoutCount="0" characterSet="0" encoding="0" expiry="500" feedback="0" messageFlags="0" messageType="8" messageSequenceNumber="1" offset="0" originalLength="-1" persistence="2" priority="-1" putApplicationType="0" replyToQueueName="ORIGINAL" report="0"/>
     </MQInputMessage>
 </MessagePool>
