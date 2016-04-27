@@ -1,4 +1,4 @@
-package com.anz.bl.transform.pojo;
+package com.anz.MQToMQ.transform.pojo;
 
 import com.anz.common.transform.ITransformPojo;
 

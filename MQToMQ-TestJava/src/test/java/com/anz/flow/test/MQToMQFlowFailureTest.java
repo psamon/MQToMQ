@@ -28,6 +28,7 @@ import org.xml.sax.SAXException;
 import com.anz.MQToMQ.transform.pojo.NumbersInput;
 import com.anz.MQToMQ.transform.pojo.Result;
 import com.anz.common.dataaccess.models.iib.Operation;
+import com.anz.common.error.ExceptionMessage;
 import com.anz.common.test.FlowTest;
 import com.anz.common.transform.TransformUtils;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -47,14 +48,14 @@ import com.ibm.broker.config.proxy.RecordedTestData;
  * @author sanketsw
  * 
  */
-public class MQToMQFlowTest extends FlowTest {
+public class MQToMQFlowFailureTest extends FlowTest {
 
 	private static final Logger logger = LogManager.getLogger();
 	
 	private Gson gson = new Gson();
 	ObjectMapper objectMapper = new ObjectMapper();
 
-	private static final String TEST_FILE_001 = "MQToMQ.Test001.xml";
+	private static final String TEST_FILE_001 = "MQToMQ.FailTest001.xml";
 	private static final String applicationName = "MQToMQ";
 	private static final String flowName = "Main";
 	private static final String injectNodeName ="Read Request";
@@ -101,40 +102,25 @@ public class MQToMQFlowTest extends FlowTest {
 		//Inject test message
 		injectData();
 		
-		//Test individual node outputs
-		testPreTransformNodeOutput();
-		testPostTransformNodeOutput();
+		//Test failure subflow outputs
+		testFailureHandlerSubflowOutput();
 		
 
 	}
-	
-	
-	public void testPreTransformNodeOutput() throws ConfigManagerProxyPropertyNotInitializedException, XPathExpressionException, SAXException, IOException, ParserConfigurationException {	
+
+	public void testFailureHandlerSubflowOutput() throws ConfigManagerProxyPropertyNotInitializedException, XPathExpressionException, SAXException, IOException, ParserConfigurationException {	
 		
 		// PreTransform Node
-		List<RecordedTestData> dataList = getTestDataList("Transform Request");
-		
+		List<RecordedTestData> dataList = getTestDataList("Failure Handler");
+				
 		String json = getNodeOutputJsonStringFromBlob(dataList.get(0));
-		NumbersInput out = gson.fromJson(json, NumbersInput.class);
+		ExceptionMessage out = gson.fromJson(json, ExceptionMessage.class);
 
 		assertNotNull(out);
-		assertEquals(105, out.getLeft());
-		assertEquals(7, out.getRight());
-		
-	}
-	
-	
-	public void testPostTransformNodeOutput() throws ConfigManagerProxyPropertyNotInitializedException, XPathExpressionException, SAXException, IOException, ParserConfigurationException {	
-		
-		// PreTransform Node
-		List<RecordedTestData> dataList = getTestDataList("Transform Response");
-		
-		String json = getNodeOutputJsonStringFromBlob(dataList.get(0));
-		NumbersInput out = gson.fromJson(json, NumbersInput.class);
+		assertEquals("100", out.getStatus().getCode());
+		assertEquals("AU", out.getBroker().getRegion());
+		assertEquals(getBrokerNode().getName(), out.getBroker().getBrokerName());
 
-		assertNotNull(out);
-		assertEquals(105, out.getLeft());
-		assertEquals(107, out.getRight());
-			
+		
 	}
 }

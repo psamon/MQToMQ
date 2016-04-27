@@ -1,12 +1,12 @@
 /**
  * 
  */
-package com.anz.bl.transform;
+package com.anz.MQToMQ.transform;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.anz.bl.transform.pojo.Result;
+import com.anz.MQToMQ.transform.pojo.Result;
 import com.anz.common.compute.ComputeInfo;
 import com.anz.common.dataaccess.models.iib.Operation;
 import com.anz.common.domain.OperationDomain;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.anz.bl.transform;
+package com.anz.MQToMQ.transform;
 
 import org.apache.logging.log4j.LogManager;
 
@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 
 import org.apache.logging.log4j.Logger;
 
-import com.anz.bl.transform.pojo.NumbersInput;
+import com.anz.MQToMQ.transform.pojo.NumbersInput;
 
 
 import com.anz.common.cache.impl.CacheHandlerFactory;

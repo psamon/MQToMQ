@@ -1,12 +1,13 @@
 /**
  * 
  */
-package com.anz.bl.compute;
+package com.anz.MQToMQ.compute;
 
-import com.anz.bl.transform.PreTransformBLSample;
+import com.anz.MQToMQ.transform.PreTransformBLSample;
 
 import com.anz.common.compute.impl.CommonJsonJsonTransformCompute;
 import com.anz.common.transform.ITransformer;
+import com.ibm.broker.plugin.MbMessageAssembly;
 
 /**
  * @author sanketsw
@@ -20,6 +21,12 @@ public class RequestTransformCompute extends CommonJsonJsonTransformCompute {
 	@Override
 	public ITransformer<String, String> getTransformer() {
 		return new PreTransformBLSample();
+	}
+
+	@Override
+	public void saveUserProvidedProperties(MbMessageAssembly outAssembly) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

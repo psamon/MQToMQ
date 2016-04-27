@@ -1,14 +1,15 @@
 /**
  * 
  */
-package com.anz.bl.compute;
+package com.anz.MQToMQ.compute;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.anz.bl.transform.PreTransformBLSample;
+import com.anz.MQToMQ.transform.PreTransformBLSample;
 
 import com.anz.common.cache.impl.CacheHandlerFactory;
+import com.anz.common.compute.TransformType;
 import com.anz.common.compute.impl.CommonJavaCompute;
 import com.anz.common.transform.ITransformer;
 import com.ibm.broker.plugin.MbElement;
@@ -68,5 +69,11 @@ public class RetrieveOriginalHeader extends CommonJavaCompute {
 			//TODO: Error statements
 			logger.info("ERROR: original Reply To Q not found in cache");
 		}
+	}
+
+	@Override
+	public TransformType getTransformationType() {
+		// TODO Auto-generated method stub
+		return TransformType.MQ_MQ;
 	}
 }

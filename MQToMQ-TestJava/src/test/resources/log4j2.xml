@@ -1,21 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" monitorInterval="60">
-	<Appenders>
-		<Console name="Console" target="SYSTEM_OUT">
-			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
-		</Console>
-	</Appenders>
-	<Loggers>
-		<Root level="error">
-			<AppenderRef ref="Console" />
-		</Root>
+<Configuration status="WARN" monitorInterval="5">
+    <Appenders>
 
-		<Logger name="com.anz.flow.test" level="info" additivity="false">
-			<AppenderRef ref="Console" />
-		</Logger>
+     <File name="MyFile" fileName="/root/logs/app.log">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+     </File>
+     <Async name="Async">
+      <AppenderRef ref="MyFile"/>
+     </Async>
+     
+     <File name="MQToMQFile" fileName="/root/logs/MQToMQ.log">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+     </File>
+     <Async name="MQToMQAsync">
+      <AppenderRef ref="MQToMQFile"/>
+     </Async>
 
-		<Logger name="com.anz.common.test" level="info" additivity="false">
-			<AppenderRef ref="Console" />
-		</Logger>
-	</Loggers>
+    </Appenders>
+
+    <Loggers>
+     <Root level="error">
+      <AppenderRef ref="Async"/>
+     </Root>
+
+     <logger name="com.anz" level="info" additivity="false">
+      <AppenderRef ref="Async"/>
+     </logger>
+     <logger name="ApplicationLogger" level="info" additivity="false">
+      <AppenderRef ref="Async"/>
+     </logger>
+
+     <logger name="com.anz.MQToMQ" level="info" additivity="false">
+      <AppenderRef ref="MQToMQAsync"/>
+     </logger>
+
+  </Loggers>
 </Configuration>
