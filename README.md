@@ -11,7 +11,7 @@ To test the message flow you must create a number of Websphere MQ message queues
 
 You can either create queues with these default names or change their default values in IBM Integration Bus to match your own queue names. To do the latter, open the Main.msgflow message flow in IIB and open the User Defined Properties tab. Click on each of providerQueue, replyQueue, outputQueue and change the default values to your own queue names. Then open properties for the MQ Input node called Read Request and under Basic, change the Queue Name to your own value.
 
-Use the following messages to test the message flow using the flow excerciser:
+Make sure input messages have an MQMD header then use the following messages to test the message flow using the flow excerciser:
 
 For a pass:
 
@@ -22,4 +22,4 @@ For a pass:
 
 For a fail:
 
-Message: (empty)
+(empty)
