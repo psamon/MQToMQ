@@ -4,6 +4,7 @@
 package com.anz.bl.compute;
 
 import org.apache.logging.log4j.LogManager;
+
 import org.apache.logging.log4j.Logger;
 
 import com.anz.bl.transform.PreTransformBLSample;
@@ -11,8 +12,13 @@ import com.anz.bl.transform.PreTransformBLSample;
 import com.anz.common.cache.impl.CacheHandlerFactory;
 import com.anz.common.compute.impl.CommonJavaCompute;
 import com.anz.common.transform.ITransformer;
+import com.ibm.broker.config.proxy.BrokerProxy;
+import com.ibm.broker.config.proxy.ExecutionGroupProxy;
+import com.ibm.broker.config.proxy.MessageFlowProxy;
 import com.ibm.broker.plugin.MbElement;
+import com.ibm.broker.plugin.MbMessage;
 import com.ibm.broker.plugin.MbMessageAssembly;
+import com.ibm.broker.config.proxy.AttributeConstants;
 
 /**
  * @author sanketsw
@@ -25,35 +31,48 @@ public class SaveModifyHeader extends CommonJavaCompute {
 	/* (non-Javadoc)
 	 * @see com.anz.common.compute.impl.CommonJsonJsonTransformCompute#getTransformer()
 	 */
-
 	@Override
 	public void execute(MbMessageAssembly inAssembly,
 			MbMessageAssembly outAssembly) throws Exception {
 		
-		logger.info("Inside execute");
+		logger.info("SaveModifyHeader:execute()");
 		
+		// Get message root element
 		MbElement root = outAssembly.getMessage().getRootElement();
 		
+		// Get Message ID
 		MbElement msgId = root.getFirstElementByPath("/MQMD/MsgId");
 		logger.info("{} = {}", msgId.getName(), msgId.getValueAsString());
 		
+		// Get Correlation ID
 		MbElement correlId = root.getFirstElementByPath("/MQMD/CorrelId");
 		logger.info("{} = {}", correlId.getName(), correlId.getValueAsString());
 		
+		// Get Reply To Queue 
 		MbElement replyToQ = root.getFirstElementByPath("/MQMD/ReplyToQ");
-		
+		logger.info("Original ReplyToQ = {}", replyToQ.getValueAsString());
 				
+		// Set value of Correlation ID to the Message ID
 		correlId.setValue(msgId.getValue());
-		logger.info("new correlID = {}", correlId.getValueAsString());
+		logger.info("New CorrelId = {}", correlId.getValueAsString());
 		
+		// Store Original Reply To Queue in cache
 		CacheHandlerFactory.getInstance().updateCache("MqHeaderCache", correlId.getValueAsString(), replyToQ.getValueAsString());
-		logger.info("Values stored in cache");
-		
-		logger.info("original replyToQ = {}", replyToQ.getValueAsString());
-		String newReplyToQ = "RESPONSE";
-		replyToQ.setValue(newReplyToQ);
-		logger.info("new replyToQ = {}", replyToQ.getValueAsString());
-		
-	}
+		logger.info("Orgininal ReplyToQ stored in cache");
 
+		// Create Local Environment Provider Queue element
+		MbElement providerQ = outAssembly.getLocalEnvironment().getRootElement()
+				.createElementAsFirstChild(MbElement.TYPE_NAME_VALUE, "Destination","")
+				.createElementAsFirstChild(MbElement.TYPE_NAME_VALUE, "MQ", "")
+				.createElementAsFirstChild(MbElement.TYPE_NAME_VALUE, "DestinationData", "")
+				.createElementAsFirstChild(MbElement.TYPE_NAME_VALUE, "queueName", "");
+		
+		// Set Provider Queue Name to User Defined Property: providerQueue
+		providerQ.setValue((String) getUserDefinedAttribute("providerQueue"));
+		logger.info("{} = {}", providerQ.getName(), providerQ.getValue());
+		
+		// Set Reply To Queue name to user defined property: responseQueue
+		replyToQ.setValue((String) getUserDefinedAttribute("responseQueue"));
+		logger.info("provider {} = {}", replyToQ.getName(), replyToQ.getValue());		
+	}
 }

@@ -3,7 +3,6 @@
 	<name>MQToMQ</name>
 	<comment></comment>
 	<projects>
-		<project>anz-iib-commons</project>
 		<project>MQToMQ-Java</project>
 		<project>MQToMQ-TestJava</project>
 		<project>MQToMQJava</project>

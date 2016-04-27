@@ -15,7 +15,9 @@ import com.anz.common.transform.TransformUtils;
 
 import com.anz.common.cache.impl.CacheHandlerFactory;
 
+import com.anz.common.dataaccess.models.iib.IFXCode;
 import com.anz.common.dataaccess.models.iib.Operation;
+import com.anz.common.domain.IFXCodeDomain;
 import com.anz.common.domain.OperationDomain;
 import com.anz.common.transform.ITransformer;
 import com.anz.common.transform.TransformUtils;
@@ -36,16 +38,26 @@ public class PostTransformBLSample implements ITransformer<String, String> {
 	public String execute(String inputJson, Logger logger, ComputeInfo metadata) throws Exception {
 		NumbersInput json = (NumbersInput) TransformUtils.fromJSON(inputJson,
 				NumbersInput.class);
-		logger.info("Inside Java Compute");
-		
-		
-		//METHOD TO RETRIEVE FROM CACHE
-		String value = CacheHandlerFactory.getInstance().lookupCache("MQHeaderCache", "MQMDMessageId");
-		
-		json.setSum(json.getLeft() + json.getRight());
+		logger.info("Inside Java Compute");	
+		if(json == null){
+			//ifx code here from cache
+			logger.info("json is null: MQ Application returned error.");
+			IFXCodeDomain.getInstance().getErrorCode("500");
+		} else {
+			// do the response tranform and return
+			logger.info("json not null: MQ Application successful");
+			//------------------------------------------------------------------------------------------
+			// User Code Below
+			
+			
+			// Example user code
+			json.setRight(json.getRight() + 100);
+			
+			
+			// End User Code
+			//------------------------------------------------------------------------------------------
+		}
 		String out = TransformUtils.toJSON(json);
 		return out;
 	}
-
-
 }

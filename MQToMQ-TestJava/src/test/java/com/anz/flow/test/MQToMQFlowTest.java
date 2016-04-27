@@ -4,6 +4,7 @@
 package com.anz.flow.test;
 
 import static org.junit.Assert.assertEquals;
+
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;

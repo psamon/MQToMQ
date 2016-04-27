@@ -30,28 +30,43 @@ public class RetrieveOriginalHeader extends CommonJavaCompute {
 	public void execute(MbMessageAssembly inAssembly,
 			MbMessageAssembly outAssembly) throws Exception {
 		
+		//RETRIEVE ORIGINAL REPLY TO QUEUE AND SET OUTPUT QUEUE
 		
+		logger.info("RetrieveOriginalHeader:execute()");
 		
+		// Get message root element
 		MbElement root = outAssembly.getMessage().getRootElement();
 		
+		// Get Correlation ID
 		MbElement correlId = root.getFirstElementByPath("/MQMD/CorrelId");
+		logger.info("{} = {}", correlId.getName(), correlId.getValue());
 		
+		// Get Reply To Queue
 		MbElement replyToQ = root.getFirstElementByPath("/MQMD/ReplyToQ");
-				
+		logger.info("provider {} = {}", replyToQ.getName(), replyToQ.getValue());
+		
+		// Create Local Environment Output Queue element
+		MbElement outputQ = outAssembly.getLocalEnvironment().getRootElement()
+				.createElementAsFirstChild(MbElement.TYPE_NAME_VALUE, "Destination","")
+				.createElementAsFirstChild(MbElement.TYPE_NAME_VALUE, "MQ", "")
+				.createElementAsFirstChild(MbElement.TYPE_NAME_VALUE, "DestinationData", "")
+				.createElementAsFirstChild(MbElement.TYPE_NAME_VALUE, "queueName", "");
+		
+		// Set Output Queue
+		outputQ.setValue((String) getUserDefinedAttribute("outputQueue"));
+		logger.info("output {} = {}", outputQ.getName(), outputQ.getValue());
+		
+		// Retrieve Original Reply To Queue from cache
 		String originalReplyToQ = CacheHandlerFactory.getInstance().lookupCache("MQHeaderCache", correlId.getValueAsString());
 		
+		// If Original Reply To Queue found in cache, set as Reply To Queue
 		if(originalReplyToQ != null){
-			logger.info("RETURN TO Q RETRIEVED FROM CACHE");
-			logger.info("temp reply to Q = {}", replyToQ.getValueAsString());
+			logger.info("Original Reply To Queue retrieved from cache");
 			replyToQ.setValue(originalReplyToQ);
-			logger.info("original reply to Q = {}", replyToQ.getValueAsString());
+			logger.info("Original Reply To Queue = {}", replyToQ.getValueAsString());
 		} else {
-			//TODO: Error statments
+			//TODO: Error statements
 			logger.info("ERROR: original Reply To Q not found in cache");
 		}
-		
-		
-		
 	}
-
 }
