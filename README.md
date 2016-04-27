@@ -2,6 +2,7 @@
 
 This is an MQToMQ message flow Application based on the framework from HttpJsonToHttpJson at https://github.com/sanketsw/HttpJsonToHttpJson.git
 For the Application to deploy you must also include the common framework components anz-iib-commons from https://github.com/sanketsw/anz-iib-commons.git
+You will also need to have your own MQ application, for this application to call. This can be as simple as creating a message flow with an MQ Input node connected to an MQ Reply node.
 
 To test the message flow you must create a number of Websphere MQ message queues. These include:
 -The Input Queue, default name: IN
